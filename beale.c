@@ -11,7 +11,7 @@ int main (int argc, char *argv[]){
         switch (option){
             case 'e':
             // enconde
-                printf("ok");
+                
                 break;
             case 'd':
             //decode
