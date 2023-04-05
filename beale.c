@@ -10,7 +10,7 @@ int main (int argc, char *argv[]){
     while ((option = getopt(argc, argv, "e:b:m:o:c:d:i"))!=-1){
         switch (option){
             case 'e':
-            // enconde
+            // encode
                 
                 break;
             case 'd':
