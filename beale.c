@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
                 for (int i = 0; i < 10; i++)
                 {
                     fscanf(livroCifra, "%s[^\n]", line);
-                    printf("%d: %s\n", i, line);
+                    printf("%d: %c\n", i, line[0]);
                 }
             }
             fclose(livroCifra);
