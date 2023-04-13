@@ -8,6 +8,19 @@
 #define FALSE 0
 #define LINESIZE 1024
 
+typedef struct value {
+    /* lista com valores referentes a letra*/
+    int value;                  // Código correspondente à letra
+    struct values *next;
+} VALUE;
+
+typedef struct cifra {
+    /* lista que contem a cifra completa */
+    char key;                   // letra
+    VALUE *codes;               // lista de códigos possíveis
+    struct cifra *next;
+} CIFRA;
+
 int main(int argc, char *argv[])
 {
     // codificar
@@ -19,10 +32,14 @@ int main(int argc, char *argv[])
 
     FILE *livroCifra;
 
+    CIFRA *cifra;
+    cifra = malloc(sizeof(CIFRA));
+
     int option;
     int encode = FALSE;
-    char line[LINESIZE + 1];
-    while ((option = getopt(argc, argv, "edb:m:o:c:i:")) != -1)
+    char word[LINESIZE + 1];
+
+    while ((option = getopt(argc, argv, "edbc:m:o:i:")) != -1)
     {
         switch (option)
         {
@@ -37,7 +54,7 @@ int main(int argc, char *argv[])
             break;
         case 'b':
             // livro cifra
-            if (encode == TRUE)
+            if (encode == TRUE) // tirar
             {
                 livroCifra = fopen(optarg, "r");
                 if (!livroCifra)
@@ -47,10 +64,12 @@ int main(int argc, char *argv[])
                 }
 
                 // lê as 10 primeiras linhas do arquivo
-                for (int i = 0; i < 10; i++)
+                int i = 0;
+                while (!feof(livroCifra))
                 {
-                    fscanf(livroCifra, "%s[^\n]", line);
-                    printf("%d: %c\n", i, line[0]);
+                    fscanf(livroCifra, "%s[^\n]", word);
+                    printf("%d: %c\n", i, word[0]);
+                    i++;
                 }
             }
             fclose(livroCifra);
