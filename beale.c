@@ -23,41 +23,21 @@ typedef struct dict
     struct dict *next;
 } DICT;
 
-void insertCode(char key, DICT *cifra, int code){
-    DICT *temp;
-    temp = cifra;
-    VALUE *codesTemp;
-    codesTemp = malloc(sizeof(VALUE));
-    while (temp->next!=NULL){
-        if (key == temp->key) {
-            // insere codigo na lista de códigos da chave
-            codesTemp = temp->codes;
-            while (codesTemp->next!= NULL){
-                codesTemp = codesTemp->next;
-            }
-            codesTemp->value = code;
-            return;
-        }
-        else {
-
-        }
-    }
-    return;
-}
 
 DICT *createNode(int code, char key, DICT *cifra){
-    DICT *temp;
-    temp = malloc(sizeof(DICT));
-    temp = NULL;
-    temp->codes = malloc(sizeof(VALUE));
+    // verifica se já existe a key no dicionário
+    // se existe:
+        // insere valor no final da lista de códigos
+    // se nao:
+        // cria novo nó na lista de cifras
 
-    temp = cifra;
+    DICT *newNode = (DICT *)malloc(sizeof(DICT));
+    newNode->codes = malloc(sizeof(VALUE));
+    newNode->key = key;
+    newNode->codes->value = code;
+    newNode->next = cifra;
 
-    insertCode(key, temp, code);
-
-    temp->key = key;
-    temp->codes->value = code;
-    printf("%d: %c\n", temp->codes->value, temp->key);
+    return newNode;
 }
 
 int main(int argc, char *argv[])
@@ -138,5 +118,12 @@ int main(int argc, char *argv[])
             // mensagem de erro
             break;
         }
+    }
+    int i = 0;
+
+    while (cifra->next!= NULL){
+        printf("%d: %c\n", i, cifra->key);
+        cifra = cifra->next;
+        i++;
     }
 }
