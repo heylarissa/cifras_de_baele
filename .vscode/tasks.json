@@ -5,7 +5,7 @@
             "label": "C/C++: gcc-9 build active file",
             "command": "/usr/bin/gcc-9",
             "args": [
-                "-fdiagnostics-color=always",
+                "-Wall",
                 "-g",
                 "${file}",
                 "-o",
