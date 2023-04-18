@@ -23,19 +23,70 @@ typedef struct dict
     struct dict *next;
 } DICT;
 
+int keyExists(char key, DICT *cifra)
+{
+    DICT *temp;
 
-DICT *createNode(int code, char key, DICT *cifra){
+    temp = cifra;
+
+    while (temp != NULL)
+    {
+        if (temp->key == key)
+        {
+            return TRUE;
+        }
+        temp = temp->next;
+    }
+
+    return FALSE;
+}
+
+VALUE *insertCodeValue(DICT *cifra, char key, int code)
+{
+
+    VALUE *newCode;
+    newCode = malloc(sizeof(VALUE));
+    newCode->value = code;
+
+    DICT *temp;
+    temp = cifra;
+
+    // procura
+    while (temp != NULL)
+    {
+        if (temp->key == key){
+            newCode->next = temp->codes; // insere o código no começo da lista
+        }
+    }
+
+    return newCode;
+}
+
+DICT *createNode(int code, char key, DICT *cifra)
+{
     // verifica se já existe a key no dicionário
     // se existe:
-        // insere valor no final da lista de códigos
+    // insere valor no final da lista de códigos
     // se nao:
-        // cria novo nó na lista de cifras
-
+    // cria novo nó na lista de cifras
     DICT *newNode = (DICT *)malloc(sizeof(DICT));
     newNode->codes = malloc(sizeof(VALUE));
     newNode->key = key;
-    newNode->codes->value = code;
-    newNode->next = cifra;
+    newNode->codes->value = code; // criar nó
+
+    if (cifra == NULL) // lista vazia
+    {
+        cifra = newNode;
+        return cifra;
+    }
+    else if (!keyExists(key, cifra)) // cria novo nó na lista de cifras
+    {
+        newNode->next = cifra;
+    }
+    else
+    { // busca o nó da chave e insere na lista
+        newNode->codes = insertCodeValue(cifra, key, code);
+    }
 
     return newNode;
 }
@@ -66,6 +117,7 @@ int main(int argc, char *argv[])
         case 'e':
             // encode
             encode = TRUE;
+
             break;
 
         case 'd':
@@ -87,8 +139,7 @@ int main(int argc, char *argv[])
             while (!feof(livroCifra))
             {
                 fscanf(livroCifra, "%s[^\n]", word);
-                // Criar nodo da lista cifra
-                // Enquanto cria nodo da lista cifra, criar nodo da lista de values
+
                 cifra = createNode(i, word[0], cifra);
                 i++;
             }
@@ -121,7 +172,8 @@ int main(int argc, char *argv[])
     }
     int i = 0;
 
-    while (cifra->next!= NULL){
+    while (cifra != NULL)
+    {
         printf("%d: %c\n", i, cifra->key);
         cifra = cifra->next;
         i++;
