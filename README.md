@@ -4,7 +4,7 @@
 
 #### Funções de codificação
 
-[ ] Abrir livro cifra  
+[x] Abrir livro cifra  
 [ ] Load chaves na memória  
 [ ] Cria arquivo de chaves  
 [ ] Busca letra da mensagem original na lista de chaves  
