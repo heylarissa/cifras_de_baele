@@ -38,6 +38,7 @@ void initDictNode(DICT *dictionary)
     dictionary->keys = malloc(sizeof(KEY));
 }
 
+// Adiciona uma nova chave à lista
 KEY *appendKey(KEY *keys, int newKey)
 {
     KEY *newNode;
@@ -51,9 +52,14 @@ KEY *appendKey(KEY *keys, int newKey)
 
 DICT *createNode(char letter, int key, DICT *dictionary)
 {
-    DICT *newDict = NULL, *aux;
+    DICT *newDict, *aux;
+
+    newDict = malloc(sizeof(DICT));
+    newDict->keys = malloc(sizeof(KEY));
+
     aux = dictionary;
-    printf("%d %c\n", key, letter);
+
+    // TESTE criar novo nodo
 
     while (aux && aux->letter != letter)
         aux = aux->next;
@@ -66,7 +72,15 @@ DICT *createNode(char letter, int key, DICT *dictionary)
 
     if (aux)
     {
+        printf("%d %c\n", key, letter);
+
         // aux->keys = appendKey(aux->keys);
+    }
+    else
+    {
+        newDict->keys->value = key;
+        newDict->letter = key;
+        newDict->next = dictionary;
     }
 
     return newDict;
@@ -94,6 +108,7 @@ DICT *loadKeys()
 
         key++;
     }
+
     fclose(livroCifra);
 
     return dictionary;
