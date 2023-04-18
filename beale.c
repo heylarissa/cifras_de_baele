@@ -8,107 +8,128 @@
 #define FALSE 0
 #define LINESIZE 1024
 
-typedef struct value
+typedef struct keys
 {
-    /* lista com valores referentes a letra*/
-    int value; // Código correspondente à letra
-    struct value *next;
-} VALUE;
+    /* Armazena as chaves */
+    int value;
+    struct keys *next;
+} KEY;
 
-typedef struct dict
+typedef struct keysDict
 {
-    /* lista que contem a cifra completa */
-    char key;     // letra
-    VALUE *codes; // lista de códigos possíveis
-    struct dict *next;
+    /* Armazema o relacionamento da letra com as chaves possíveis */
+    char letter;
+    KEY *keys; // string dinamica!!!!!!!!!!
+    struct keysDict *next;
 } DICT;
 
-int keyExists(char key, DICT *cifra)
+void checkFileOpening(FILE *file)
 {
-    DICT *temp;
-
-    temp = cifra;
-
-    while (temp != NULL)
+    if (!file)
     {
-        if (temp->key == key)
-        {
-            return TRUE;
-        }
-        temp = temp->next;
+        perror("Erro ao abrir arquivo");
+        exit(1);
     }
-
-    return FALSE;
 }
 
-VALUE *insertCodeValue(DICT *cifra, char key, int code)
+void initDictNode(DICT *dictionary)
 {
-
-    VALUE *newCode;
-    newCode = malloc(sizeof(VALUE));
-    newCode->value = code;
-
-    DICT *temp;
-    temp = cifra;
-
-    // procura
-    while (temp != NULL)
-    {
-        if (temp->key == key){
-            newCode->next = temp->codes; // insere o código no começo da lista
-        }
-    }
-
-    return newCode;
+    dictionary = malloc(sizeof(DICT));
+    dictionary->keys = malloc(sizeof(KEY));
 }
 
-DICT *createNode(int code, char key, DICT *cifra)
+// Adiciona uma nova chave à lista
+KEY *appendKey(KEY *keys, int newKey)
 {
-    // verifica se já existe a key no dicionário
-    // se existe:
-    // insere valor no final da lista de códigos
-    // se nao:
-    // cria novo nó na lista de cifras
-    DICT *newNode = (DICT *)malloc(sizeof(DICT));
-    newNode->codes = malloc(sizeof(VALUE));
-    newNode->key = key;
-    newNode->codes->value = code; // criar nó
+    KEY *newNode;
+    newNode = malloc(sizeof(KEY));
 
-    if (cifra == NULL) // lista vazia
-    {
-        cifra = newNode;
-        return cifra;
-    }
-    else if (!keyExists(key, cifra)) // cria novo nó na lista de cifras
-    {
-        newNode->next = cifra;
-    }
-    else
-    { // busca o nó da chave e insere na lista
-        newNode->codes = insertCodeValue(cifra, key, code);
-    }
+    newNode->value = newKey;
+    newNode->next = keys;
 
     return newNode;
 }
 
-int main(int argc, char *argv[])
+DICT *createNode(char letter, int key, DICT *dictionary)
 {
-    // codificar
-    //./beale  -e  -b LivroCifra -m MensagemOriginal -o MensagemCodificada -c ArquivoDeChaves
+    DICT *newDict, *aux;
 
-    // decodificar
-    //./beale  -d  -i MensagemCodificada  -c ArquivoDeChaves  -o MensagemDecodificada
-    //./beale -d -i MensagemCodificada -b LivroCifra -o MensagemDecodificada
+    newDict = malloc(sizeof(DICT));
+    newDict->keys = malloc(sizeof(KEY));
+
+    aux = dictionary;
+
+    while (aux)
+    {
+        if (aux->letter == letter)
+        {
+            aux->keys = appendKey(aux->keys, key);
+            printf("%d %c\n", key, letter);
+
+            break;
+        }
+
+        aux = aux->next;
+    }
+
+    /*
+    Procura letra no dicionário
+    Se encontrar appendKey
+    Senão cria novo nodo
+    */
+    if (!aux)
+    {
+        newDict->keys->value = key;
+        newDict->letter = key;
+        newDict->next = dictionary;
+    }
+    else {
+
+    }
+    return newDict;
+}
+
+// Lê o arquivo e carrega as chaves na memória
+DICT *loadKeys()
+{
+    DICT *dictionary;
+    dictionary = malloc(sizeof(DICT));
+    dictionary->keys = malloc(sizeof(KEY));
 
     FILE *livroCifra;
 
-    DICT *cifra;
-    cifra = malloc(sizeof(DICT));
-    cifra->codes = malloc(sizeof(VALUE));
+    char word[LINESIZE + 1];
+
+    livroCifra = fopen(optarg, "r");
+    checkFileOpening(livroCifra);
+
+    int key = 0;
+    while (!feof(livroCifra))
+    {
+        fscanf(livroCifra, "%s[^\n]", word);
+        dictionary = createNode(word[0], key, dictionary);
+
+        key++;
+    }
+
+    fclose(livroCifra);
+
+    return dictionary;
+}
+
+int main(int argc, char *argv[])
+{
+    // CODIFICAR
+    //./beale  -e  -b LivroCifra -m MensagemOriginal -o MensagemCodificada -c ArquivoDeChaves
+
+    // DECODIFICAR
+    //./beale  -d  -i MensagemCodificada  -c ArquivoDeChaves  -o MensagemDecodificada
+    //./beale -d -i MensagemCodificada -b LivroCifra -o MensagemDecodificada
+
+    DICT *dictionary;
 
     int option;
     int encode = FALSE;
-    char word[LINESIZE + 1];
 
     while ((option = getopt(argc, argv, "edb:c:m:o:i:")) != -1)
     {
@@ -117,7 +138,6 @@ int main(int argc, char *argv[])
         case 'e':
             // encode
             encode = TRUE;
-
             break;
 
         case 'd':
@@ -128,54 +148,35 @@ int main(int argc, char *argv[])
         case 'b':
             // livro cifra
 
-            livroCifra = fopen(optarg, "r");
-            if (!livroCifra)
-            {
-                perror("Erro ao abrir arquivo");
-                exit(1); // encerra o programa com status 1
-            }
-
-            int i = 0;
-            while (!feof(livroCifra))
-            {
-                fscanf(livroCifra, "%s[^\n]", word);
-
-                cifra = createNode(i, word[0], cifra);
-                i++;
-            }
-            fclose(livroCifra);
-
+            // gera as chaves a partir do livro cifra
+            dictionary = loadKeys();
             break;
 
         case 'm':
             printf("%s", optarg);
 
             // mensagem original;
+            // a partir das chaves criadas codifica a mensagem
+
             break;
 
         case 'o':
             // mensagem codificada
+            printf("%s", optarg);
             break;
 
         case 'c':
-            // decode
+            // gera arquivo de chaves se encode == TRUE
+            // senao, usa arquivo de chaves para decodificar uma mensagem
             break;
 
         case 'i':
-            // decode
+            // mensagem codificada
             break;
 
         case '?':
             // mensagem de erro
             break;
         }
-    }
-    int i = 0;
-
-    while (cifra != NULL)
-    {
-        printf("%d: %c\n", i, cifra->key);
-        cifra = cifra->next;
-        i++;
     }
 }
