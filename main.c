@@ -7,6 +7,11 @@
 #define TRUE 1
 #define FALSE 0
 #define LINESIZE 1024
+
+
+
+
+
 int main(int argc, char *argv[])
 {
     // codificar
