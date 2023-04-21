@@ -61,18 +61,16 @@ int getDictTam(DICT dict[])
         i++;
         aux = dict[i].p;
     }
-
     return i;
 }
 
-KEYS *createNode (int key, KEYS *keyList){
+KEYS *createNode(int key, KEYS *keyList)
+{
     KEYS *aux;
-    aux = malloc (sizeof(KEYS));
+    aux = malloc(sizeof(KEYS));
     aux->key = key;
     aux->next = keyList;
-
     return aux;
-
 }
 
 void insertKey(DICT dictKeys[], int key, char letter)
@@ -142,13 +140,17 @@ int main(int argc, char *argv[])
             printf("\nDicionario criado\n");
             for (int i = 0; i <= QTTCARACTERES; i++)
             {
-                printf("%c: ", dictKeys[i].p);
-                KEYS *list = dictKeys[i].keysList;
-                while (list!= NULL){
-                    printf("%d ", list->key);
-                    list = list->next;
+                if (dictKeys[i].p != 0)
+                {
+                    printf("%c: ", dictKeys[i].p);
+                    KEYS *list = dictKeys[i].keysList;
+                    while (list != NULL)
+                    {
+                        printf("%d ", list->key);
+                        list = list->next;
+                    }
+                    printf("\n");
                 }
-                printf("\n");
             }
 
             break;

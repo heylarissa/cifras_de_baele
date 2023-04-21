@@ -5,14 +5,14 @@
 #### Funções de codificação
 
 [x] Abrir livro cifra  
-[ ] Load chaves na memória  
+[x] Load chaves na memória  
 [ ] Cria arquivo de chaves  
 [ ] Busca letra da mensagem original na lista de chaves  
 
 #### Funções de decodificação
 
 [ ] Carregar arquivo de chaves na memória  
-[ ] Load chaves na memória (livro cifra)  
+[x] Load chaves na memória (livro cifra)  
 [ ] Busca código da chave na memória  
 
 
