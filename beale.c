@@ -83,8 +83,8 @@ DICT *createNode(char letter, int key, DICT *dictionary)
         newDict->letter = key;
         newDict->next = dictionary;
     }
-    else {
-
+    else
+    {
     }
     return newDict;
 }
