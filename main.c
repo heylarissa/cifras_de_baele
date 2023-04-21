@@ -44,7 +44,7 @@ int searchKey(char letter, DICT dict[])
 {
     for (int i = 0; i <= QTTCARACTERES; i++)
     {
-        if (dict[i].p == toupper(letter) || dict[i].p == tolower(letter)) // considerar maiscula e minuscula
+        if (dict[i].p == toupper(letter) || dict[i].p == tolower(letter))
         {
             return i;
         }
@@ -65,13 +65,18 @@ int getDictTam(DICT dict[])
     return i;
 }
 
+KEYS *createNode (int key, KEYS *keyList){
+    KEYS *aux;
+    aux = malloc (sizeof(KEYS));
+    aux->key = key;
+    aux->next = keyList;
+
+    return aux;
+
+}
+
 void insertKey(DICT dictKeys[], int key, char letter)
 {
-    // busca chave no vetor
-    // se existir retorna posição da letra
-    // insere key na lista
-    // printf("%c ", letter);
-
     int position = searchKey(letter, dictKeys);
 
     if (position == -1) // não encontrou a chave no dicionario, preenche uma nova posição no vetor
@@ -79,11 +84,12 @@ void insertKey(DICT dictKeys[], int key, char letter)
         int tam = getDictTam(dictKeys);
         dictKeys[tam].p = letter;
         dictKeys[tam].keysList->key = key;
-        printf("ADICIONEI em %d\n", tam + 1);
     }
     else
     {
-        printf("\nadiciona na posicao %d\n", position);
+        printf("\nadiciona chave %d na posicao %d\n", key, position);
+
+        dictKeys[position].keysList = createNode(key, dictKeys[position].keysList);
     }
 }
 
@@ -110,19 +116,16 @@ int main(int argc, char *argv[])
     {
         switch (option)
         {
-        case 'e':
-            // encode
+        case 'e': // encode
             encode = TRUE;
 
             break;
 
-        case 'd':
-            // decode
+        case 'd': // decode
             encode = FALSE;
             break;
 
-        case 'b':
-            // livro cifra
+        case 'b': // recebe livro cifra
 
             livroCifra = fopen(optarg, "r");
             checkFileOpening(livroCifra);
@@ -139,23 +142,25 @@ int main(int argc, char *argv[])
             printf("\nDicionario criado\n");
             for (int i = 0; i <= QTTCARACTERES; i++)
             {
-                printf("%c ", dictKeys[i].p);
+                printf("%c: ", dictKeys[i].p);
+                KEYS *list = dictKeys[i].keysList;
+                while (list!= NULL){
+                    printf("%d ", list->key);
+                    list = list->next;
+                }
+                printf("\n");
             }
 
             break;
 
-        case 'm':
+        case 'm': // mensagem original;
             printf("%s", optarg);
 
-            // mensagem original;
+            break;
+        case 'o': // mensagem codificada
             break;
 
-        case 'o':
-            // mensagem codificada
-            break;
-
-        case 'c':
-            // decode
+        case 'c': // decode
             break;
 
         case 'i':
