@@ -39,6 +39,44 @@ void initDictKeys(DICT dictKeys[])
         ;
     }
 }
+void tostring(char str[], int num)
+{
+    for (int i = 0; i < 10; i++)
+    {
+        str[i] = num + '0';
+    }
+}
+
+void writeFile(DICT dictKeys[], char *optarg)
+{
+    fprintf(stdout, "Writing keys file: %s\n", optarg);
+    FILE *keysFile;
+    keysFile = fopen(optarg, "w+");
+
+    // int fputc   (int c, FILE* stream)
+    for (int i = 0; i <= QTTCARACTERES; i++)
+    {
+        if (dictKeys[i].p != 0)
+        {
+            fputc(dictKeys[i].p, keysFile);
+            fputs(": ", keysFile);
+
+            KEYS *list = dictKeys[i].keysList;
+            while (list != NULL)
+            {
+
+                char str[10];
+                sprintf(str, "%d", list->key); // copia inteiro para string
+                fputs(str, keysFile);
+                fputs(" ", keysFile);
+                list = list->next;
+            }
+            fputs("\n", keysFile);
+        }
+    }
+
+    fclose(keysFile);
+}
 
 int searchKey(char letter, DICT dict[])
 {
@@ -50,18 +88,6 @@ int searchKey(char letter, DICT dict[])
         }
     }
     return -1;
-}
-
-int getDictTam(DICT dict[])
-{
-    int i = 0;
-    char aux = dict[0].p;
-    while (aux != 0 && i < QTTCARACTERES)
-    {
-        i++;
-        aux = dict[i].p;
-    }
-    return i;
 }
 
 KEYS *createNode(int key, KEYS *keyList)
@@ -79,14 +105,12 @@ void insertKey(DICT dictKeys[], int key, char letter)
 
     if (position == -1) // não encontrou a chave no dicionario, preenche uma nova posição no vetor
     {
-        int tam = getDictTam(dictKeys);
-        dictKeys[tam].p = letter;
-        dictKeys[tam].keysList->key = key;
+        int l = tolower(letter); // insere na posicao correspondente ao código ASCI da letra minúscula, por isso já fica ordenado
+        dictKeys[l].p = l;
+        dictKeys[l].keysList->key = key;
     }
     else
     {
-        printf("\nadiciona chave %d na posicao %d\n", key, position);
-
         dictKeys[position].keysList = createNode(key, dictKeys[position].keysList);
     }
 }
@@ -103,9 +127,9 @@ int main(int argc, char *argv[])
     FILE *livroCifra;
     DICT dictKeys[QTTCARACTERES + 1];
     int dictTam;
+
     initDictKeys(dictKeys);
 
-    printf("\n\n");
     int option;
     int encode = FALSE;
     char word[LINESIZE + 1];
@@ -116,7 +140,6 @@ int main(int argc, char *argv[])
         {
         case 'e': // encode
             encode = TRUE;
-
             break;
 
         case 'd': // decode
@@ -137,21 +160,7 @@ int main(int argc, char *argv[])
             }
             fclose(livroCifra);
 
-            printf("\nDicionario criado\n");
-            for (int i = 0; i <= QTTCARACTERES; i++)
-            {
-                if (dictKeys[i].p != 0)
-                {
-                    printf("%c: ", dictKeys[i].p);
-                    KEYS *list = dictKeys[i].keysList;
-                    while (list != NULL)
-                    {
-                        printf("%d ", list->key);
-                        list = list->next;
-                    }
-                    printf("\n");
-                }
-            }
+
 
             break;
 
@@ -162,7 +171,11 @@ int main(int argc, char *argv[])
         case 'o': // mensagem codificada
             break;
 
-        case 'c': // decode
+        case 'c': // escreve arquivo de chaves
+            if (encode)
+            {
+                writeFile(dictKeys, optarg);
+            }
             break;
 
         case 'i':
