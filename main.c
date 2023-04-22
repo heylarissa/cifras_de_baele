@@ -21,6 +21,7 @@ typedef struct dict
     char p;
     KEYS *keysList;
 } DICT;
+
 void checkFileOpening(FILE *file)
 {
     if (!file)
@@ -36,14 +37,6 @@ void initDictKeys(DICT dictKeys[])
     {
         dictKeys[i].p = 0;
         dictKeys[i].keysList = malloc(sizeof(KEYS));
-        ;
-    }
-}
-void tostring(char str[], int num)
-{
-    for (int i = 0; i < 10; i++)
-    {
-        str[i] = num + '0';
     }
 }
 
@@ -53,7 +46,6 @@ void writeFile(DICT dictKeys[], char *optarg)
     FILE *keysFile;
     keysFile = fopen(optarg, "w+");
 
-    // int fputc   (int c, FILE* stream)
     for (int i = 0; i <= QTTCARACTERES; i++)
     {
         if (dictKeys[i].p != 0)
@@ -64,7 +56,6 @@ void writeFile(DICT dictKeys[], char *optarg)
             KEYS *list = dictKeys[i].keysList;
             while (list != NULL)
             {
-
                 char str[10];
                 sprintf(str, "%d", list->key); // copia inteiro para string
                 fputs(str, keysFile);
@@ -78,7 +69,7 @@ void writeFile(DICT dictKeys[], char *optarg)
     fclose(keysFile);
 }
 
-int searchKey(char letter, DICT dict[])
+int searchChar(char letter, DICT dict[])
 {
     for (int i = 0; i <= QTTCARACTERES; i++)
     {
@@ -101,11 +92,11 @@ KEYS *createNode(int key, KEYS *keyList)
 
 void insertKey(DICT dictKeys[], int key, char letter)
 {
-    int position = searchKey(letter, dictKeys);
+    int position = searchChar(letter, dictKeys);
 
     if (position == -1) // não encontrou a chave no dicionario, preenche uma nova posição no vetor
     {
-        int l = tolower(letter); // insere na posicao correspondente ao código ASCI da letra minúscula, por isso já fica ordenado
+        int l = tolower(letter); // insere na posicao correspondente ao código ASCII da letra minúscula, por isso já fica ordenado
         dictKeys[l].p = l;
         dictKeys[l].keysList->key = key;
     }
@@ -115,6 +106,79 @@ void insertKey(DICT dictKeys[], int key, char letter)
     }
 }
 
+int getListSize(KEYS *list)
+{
+    int tam = 0;
+    KEYS *aux;
+    aux = list;
+
+    while (aux != NULL)
+    {
+        aux = aux->next;
+        tam++;
+    }
+
+    return tam;
+}
+
+int getRandomKey(DICT dictKeys[], int position)
+{
+
+    KEYS *list;
+    list = dictKeys[position].keysList;
+    int key;
+    int tam = getListSize(list);
+
+    position = rand() % tam;
+
+    for (int i = 0; i <= position; i++)
+    {
+        if (i == position)
+        {
+            key = list->key;
+        }
+        list = list->next;
+    }
+    return key;
+}
+
+char *encodeMessage(char message[], DICT dictKeys[])
+{
+    int position;
+    int key;
+    char output[LINESIZE];
+
+    for (int i = 0; i < strlen(message); i++)
+    {
+
+        if (isspace(message[i]))
+        {
+            strcat(output, "-1 ");
+        }
+        else
+        {
+            position = searchChar(message[i], dictKeys);
+            key = getRandomKey(dictKeys, position);
+
+            char str[10];
+            sprintf(str, "%d", key); // copia inteiro para string
+            strcat(output, str);
+            strcat(output, " ");
+        }
+    }
+
+    return strdup(output);
+}
+
+void generateOutputFile(char optarg[], char encodedMessage[])
+{
+    FILE *output;
+    output = fopen(optarg, "w+");
+
+    fputs(encodedMessage, output);
+
+    fclose(output);
+}
 int main(int argc, char *argv[])
 {
     // codificar
@@ -133,6 +197,8 @@ int main(int argc, char *argv[])
     int option;
     int encode = FALSE;
     char word[LINESIZE + 1];
+
+    char encodedMessage[LINESIZE];
 
     while ((option = getopt(argc, argv, "edb:c:m:o:i:")) != -1)
     {
@@ -159,16 +225,15 @@ int main(int argc, char *argv[])
                 key++;
             }
             fclose(livroCifra);
-
-
-
             break;
 
         case 'm': // mensagem original;
-            printf("%s", optarg);
+            strcpy(encodedMessage, encodeMessage(optarg, dictKeys));
+            fprintf(stdout, "%s\n", encodedMessage);
 
             break;
         case 'o': // mensagem codificada
+            generateOutputFile(optarg, encodedMessage);
             break;
 
         case 'c': // escreve arquivo de chaves

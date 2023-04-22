@@ -6,7 +6,7 @@
 
 [x] Abrir livro cifra  
 [x] Load chaves na memória  
-[ ] Cria arquivo de chaves  
+[x] Cria arquivo de chaves  
 [ ] Busca letra da mensagem original na lista de chaves  
 
 #### Funções de decodificação
