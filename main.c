@@ -65,7 +65,7 @@ void writeFile(int cflag, DICT dictKeys[], char *optarg)
                 {
                     char str[10];
                     sprintf(str, "%d", list->key); // copia inteiro para string
-                    //fwrite(str, sizeof(char), sizeof(DICT)*QTTCARACTERES, keysFile);
+                    // fwrite(str, sizeof(char), sizeof(DICT)*QTTCARACTERES, keysFile);
                     fputs(str, keysFile);
                     fputs(" ", keysFile);
                     list = list->next;
@@ -85,7 +85,7 @@ void writeFile(int cflag, DICT dictKeys[], char *optarg)
 // Busca um determinado caracter no dicionario. Retorna -1 caso não encontre, ou a posição no dicionario caso encontre.
 int searchChar(char letter, DICT dict[])
 {
-    for (int i = 0; i <= QTTCARACTERES; i++)
+    for (int i = 0; i < QTTCARACTERES; i++)
     {
         if (dict[i].p == toupper(letter) || dict[i].p == tolower(letter))
         {
@@ -105,7 +105,7 @@ KEYS *createNode(int key, KEYS *keyList)
     return aux;
 }
 
-// Insere um novo caracter no dicionário
+// Insere um novo caractere no dicionário
 void insertKey(DICT dictKeys[], int key, char letter)
 {
     int position = searchChar(letter, dictKeys);
@@ -141,7 +141,6 @@ int getListSize(KEYS *list)
 // Pega chave aleatória de uma determinada letra do dicionário
 int getRandomKey(DICT dictKeys[], int position)
 {
-
     KEYS *list;
     list = dictKeys[position].keysList;
     int key, tam = getListSize(list);
@@ -178,7 +177,6 @@ char *encodeMessage(int mflag, char message[], DICT dictKeys[])
             sprintf(str, "%d", key); // copia inteiro para string
             strcat(output, str);
             strcat(output, " ");
-            printf("%s\n\n", output);
         }
     }
     else
@@ -226,12 +224,20 @@ void loadKeyFile(DICT dictKeys[], char filename[])
         key++;
     }
     fclose(keyFile);
-    // printDictKeys(dictKeys);
+}
+
+void completeDictKeys(DICT dictKeys[])
+{
+    int key = -1;
+    for (int i = 32; i < 127; i++) // caracteres especiais da tabela ASCII
+    {
+        insertKey(dictKeys, key, i);
+        key--;
+    }
 }
 
 void createDictKeys(int bflag, char *livroFilename, DICT dictKeys[])
 {
-
     if (bflag)
     {
         FILE *livroCifra;
@@ -248,7 +254,9 @@ void createDictKeys(int bflag, char *livroFilename, DICT dictKeys[])
             insertKey(dictKeys, key, word[0]);
             key++;
         }
+
         fclose(livroCifra);
+        completeDictKeys(dictKeys);
     }
     else
     {
@@ -257,14 +265,91 @@ void createDictKeys(int bflag, char *livroFilename, DICT dictKeys[])
     }
 }
 
-void completeDictKeys(DICT dictKeys[])
+char searchKey(DICT dictKeys[], int key)
 {
-    int key = -1;
-    for (int i = 32; i < 127; i++) // caracteres especiais da tabela ASCII
-    {
-        insertKey(dictKeys, key, i);
+    char p;
+    KEYS *aux;
 
-        key--;
+    for (int i = 0; i < QTTCARACTERES; i++)
+    {
+        aux = dictKeys[i].keysList;
+        p = dictKeys[i].p;
+
+        while (aux)
+        {
+            if (key == aux->key)
+            {
+                return p;
+            }
+            aux = aux->next;
+        }
+    }
+
+    return -1;
+}
+
+void decodeOriginalMessage(DICT dictKeys[], int iflag, char message[])
+{
+    int key;
+    char aux[2];
+    char output[LINESIZE + 1];
+    memset(output, 0, LINESIZE + 1); // evita lixo de memória
+    // pega caracteres até encontrar espaço
+    // converte para número
+    // pesquisa caractere válido
+
+    if (access(message, F_OK) == 0)
+    {
+        FILE *f;
+        char word[LINESIZE + 1];
+        memset(word, 0, LINESIZE);
+        f = fopen(message, "r");
+        checkFileOpening(f);
+        int i = 0;
+        while (!feof(f))
+        {
+            fscanf(f, "%s[^ ]", word);
+            key = atoi(word);
+            printf("i: %d key: %d\n", i, key);
+            aux[0] = searchKey(dictKeys, key);
+
+            if (aux[0] == -1) // tratamento de erro para chave inválida
+            {
+                aux[0] = '*';
+            }
+            aux[1] = '\0';
+
+            strcat(output, aux);
+            i++;
+        }
+        printf("out: %s\n", output);
+    }
+    else
+    {
+        char *word = strtok(message, " ");
+
+        int x = 0;
+        while (word)
+        {
+            // converte string para int
+            key = atoi(word);
+
+            // busca key
+
+            aux[0] = searchKey(dictKeys, key);
+
+            if (aux[0] == -1) // tratamento de erro para chave inválida
+            {
+                aux[0] = '*';
+            }
+            aux[1] = '\0';
+
+            strcat(output, aux);
+
+            word = strtok(NULL, " ");
+            x++;
+        }
+        printf("out: %s\n", output);
     }
 }
 
@@ -276,9 +361,6 @@ int main(int argc, char *argv[])
     // decodificar
     //./beale  -d  -i MensagemCodificada  -c ArquivoDeChaves  -o MensagemDecodificada
     //./beale -d -i MensagemCodificada -b LivroCifra -o MensagemDecodificada
-    char *locale;
-
-    locale = setlocale(LC_CTYPE, "pt_BR.ISO-8859-1");
 
     int option,
         encode = FALSE,
@@ -312,8 +394,15 @@ int main(int argc, char *argv[])
             break;
 
         case 'm': // mensagem original
-            mflag = TRUE;
-            strcpy(originalMsg, optarg);
+            if (encode)
+            {
+                mflag = TRUE;
+                strcpy(originalMsg, optarg);
+            }
+            else
+            {
+                fprintf(stderr, "ERRO: argumento -m só é usado com o parâmetro -e (encode)");
+            }
             break;
 
         case 'o': // cria arquivo de saída
@@ -327,7 +416,15 @@ int main(int argc, char *argv[])
             break;
 
         case 'i': // mensagem codificada
-            iflag = TRUE;
+            if (!encode)
+            {
+                iflag = TRUE;
+                strcpy(originalMsg, optarg);
+            }
+            else
+            {
+                fprintf(stderr, "ERRO: argumento -i só é usado com o parâmetro -d (decode)");
+            }
             break;
 
         case '?': // mensagem de erro
@@ -341,7 +438,6 @@ int main(int argc, char *argv[])
     if (encode)
     {
         createDictKeys(bflag, livroFilename, dictKeys); // gera dicionário de chaves
-        completeDictKeys(dictKeys);                     // completa dicionário com caracteres inexistentes no livro cifra
 
         strcpy(output, encodeMessage(mflag, originalMsg, dictKeys)); // codifica mensagem
         fprintf(stdout, "%s\n", output);
@@ -360,5 +456,7 @@ int main(int argc, char *argv[])
         {
             createDictKeys(bflag, livroFilename, dictKeys);
         }
+
+        decodeOriginalMessage(dictKeys, iflag, originalMsg);
     }
 }
