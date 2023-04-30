@@ -65,6 +65,7 @@ void writeFile(int cflag, DICT dictKeys[], char *optarg)
                 {
                     char str[10];
                     sprintf(str, "%d", list->key); // copia inteiro para string
+                    //fwrite(str, sizeof(char), sizeof(DICT)*QTTCARACTERES, keysFile);
                     fputs(str, keysFile);
                     fputs(" ", keysFile);
                     list = list->next;
@@ -171,20 +172,13 @@ char *encodeMessage(int mflag, char message[], DICT dictKeys[])
 
         for (int i = 0; i < strlen(message); i++)
         {
-            if (isspace(message[i]))
-            {
-                strcat(output, "-1 ");
-            }
-            else
-            {
-                position = searchChar(message[i], dictKeys);
-                key = getRandomKey(dictKeys, position);
-
-                char str[10];
-                sprintf(str, "%d", key); // copia inteiro para string
-                strcat(output, str);
-                strcat(output, " ");
-            }
+            position = searchChar(message[i], dictKeys);
+            key = getRandomKey(dictKeys, position);
+            char str[10];
+            sprintf(str, "%d", key); // copia inteiro para string
+            strcat(output, str);
+            strcat(output, " ");
+            printf("%s\n\n", output);
         }
     }
     else
@@ -265,18 +259,13 @@ void createDictKeys(int bflag, char *livroFilename, DICT dictKeys[])
 
 void completeDictKeys(DICT dictKeys[])
 {
-    char toComplete[QTTCARACTERES];
-    int key = -2;
-    for (int i = 33; i < 127; i++)
+    int key = -1;
+    for (int i = 32; i < 127; i++) // caracteres especiais da tabela ASCII
     {
-        char c[2];
-        sprintf(c, "%d", i);
-        printf("s: %s ", c);
         insertKey(dictKeys, key, i);
-        
+
         key--;
     }
-    printf("\n\n");
 }
 
 int main(int argc, char *argv[])
@@ -287,6 +276,9 @@ int main(int argc, char *argv[])
     // decodificar
     //./beale  -d  -i MensagemCodificada  -c ArquivoDeChaves  -o MensagemDecodificada
     //./beale -d -i MensagemCodificada -b LivroCifra -o MensagemDecodificada
+    char *locale;
+
+    locale = setlocale(LC_CTYPE, "pt_BR.ISO-8859-1");
 
     int option,
         encode = FALSE,
@@ -350,8 +342,7 @@ int main(int argc, char *argv[])
     {
         createDictKeys(bflag, livroFilename, dictKeys); // gera dicionário de chaves
         completeDictKeys(dictKeys);                     // completa dicionário com caracteres inexistentes no livro cifra
-        
-        
+
         strcpy(output, encodeMessage(mflag, originalMsg, dictKeys)); // codifica mensagem
         fprintf(stdout, "%s\n", output);
 

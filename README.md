@@ -18,7 +18,7 @@
 #### Outros requisitos
 
 [ ] Makefile
-[ ] Codificar letras que não existem no livro cifra
+[/] Codificar letras que não existem no livro cifra
 [x] Permitir que os comandos sejam inputados em diferentes ordens
 [x] Compilar em C99
 
