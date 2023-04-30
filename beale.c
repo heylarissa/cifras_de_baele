@@ -160,7 +160,7 @@ char *encodeMessage(int mflag, char message[], DICT dictKeys[])
     FILE *msg;
     msg = fopen(message, "r");
     checkFileOpening(msg);
-    char c = fgetc(msg), *output = malloc(sizeof(char) * LINESIZE);
+    char c = fgetc(msg), *output = malloc(sizeof(char) * (LINESIZE+1));
 
     while (c != EOF)
     {
