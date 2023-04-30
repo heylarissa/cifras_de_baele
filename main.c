@@ -148,7 +148,7 @@ char *encodeMessage(char message[], DICT dictKeys[])
 {
     int position;
     int key;
-    char output[LINESIZE];
+    char *output = malloc(sizeof(char)*LINESIZE);
 
     for (int i = 0; i < strlen(message); i++)
     {
@@ -169,7 +169,7 @@ char *encodeMessage(char message[], DICT dictKeys[])
         }
     }
 
-    return strdup(output);
+    return output;
 }
 
 void generateOutputFile(char optarg[], char encodedMessage[])
@@ -215,10 +215,10 @@ int main(int argc, char *argv[])
     initDictKeys(dictKeys);
 
     int option;
-    int encode = FALSE;
+    int encode = FALSE, cflag = FALSE;
     char word[LINESIZE + 1];
 
-    char output[LINESIZE];
+    char output[LINESIZE], originalMsg[LINESIZE], outputFile[LINESIZE + 1];
 
     while ((option = getopt(argc, argv, "edb:c:m:o:i:")) != -1)
     {
@@ -237,32 +237,22 @@ int main(int argc, char *argv[])
             livroCifra = fopen(optarg, "r");
             checkFileOpening(livroCifra);
 
-            int key = 0;
-            while (!feof(livroCifra))
-            {
-                fscanf(livroCifra, "%s[^\n]", word);
-                insertKey(dictKeys, key, word[0]);
-                key++;
-            }
-            fclose(livroCifra);
             break;
 
         case 'm': // mensagem original;
-        printf("%s\n", optarg);
-            strcpy(output, encodeMessage(optarg, dictKeys));
-            fprintf(stdout, "%s\n", output);
+            printf("%s\n", optarg);
+            strcpy(originalMsg, optarg);
+
             break;
 
         case 'o': // cria arquivo de saída
-            generateOutputFile(optarg, output);
+            strcpy(outputFile, optarg);
+
             break;
 
         case 'c': // escreve arquivo de chaves
-            if (encode)
-            {
-                writeFile(dictKeys, optarg);
-            }
-            else
+            cflag = TRUE;
+            if (!encode)
             {
                 loadKeyFile(dictKeys, optarg);
             }
@@ -275,6 +265,27 @@ int main(int argc, char *argv[])
         case '?':
             // mensagem de erro
             break;
+        }
+    }
+
+    if (encode)
+    {
+        int key = 0;
+        while (!feof(livroCifra))
+        {
+            fscanf(livroCifra, "%s[^\n]", word);
+            insertKey(dictKeys, key, word[0]);
+            key++;
+        }
+        fclose(livroCifra);
+
+        strcpy(output, encodeMessage(originalMsg, dictKeys));
+        fprintf(stdout, "%s\n", output);
+
+        generateOutputFile(outputFile, output);
+        if (cflag)
+        {
+            writeFile(dictKeys, optarg);
         }
     }
 }
