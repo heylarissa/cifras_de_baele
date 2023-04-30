@@ -3,7 +3,7 @@
 ### Funcionalidades
 
 #### Funções de codificação
-[] Receber input em arquivo
+[x] Receber input em arquivo
 [x] Abrir livro cifra  
 [x] Load chaves na memória  
 [x] Cria arquivo de chaves  
@@ -22,3 +22,11 @@
 [x] Compilar em C99
 
 ![Beale](https://user-images.githubusercontent.com/57672954/232651219-eaab62db-df86-4fea-aca0-d2f05a79e78a.jpg)
+
+### Execução
+    Codificar
+    ./beale  -e  -b LivroCifra -m MensagemOriginal -o MensagemCodificada -c ArquivoDeChaves
+
+    Decodificar
+    ./beale  -d  -i MensagemCodificada  -c ArquivoDeChaves  -o MensagemDecodificada  
+    ./beale -d -i MensagemCodificada -b LivroCifra -o MensagemDecodificada

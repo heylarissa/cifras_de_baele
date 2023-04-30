@@ -24,7 +24,7 @@ typedef struct dict
     KEYS *keysList;
 } DICT;
 
-// verifica abertura de arquivo
+// Cerifica abertura de arquivo
 void checkFileOpening(FILE *file)
 {
     if (!file)
@@ -34,7 +34,7 @@ void checkFileOpening(FILE *file)
     }
 }
 
-// aloca espaço no dicionario
+// Aloca espaço no dicionario
 void initDictKeys(DICT dictKeys[])
 {
     for (int i = 0; i <= QTTCARACTERES; i++)
@@ -44,42 +44,40 @@ void initDictKeys(DICT dictKeys[])
     }
 }
 
-// escreve arquivo de chaves
+// Escreve arquivo de chaves
 void writeFile(int cflag, DICT dictKeys[], char *optarg)
 {
-    if (cflag) // gera arquivo de chaves somente se houver opção -c
-    {
-        fprintf(stdout, "\nWriting keys file: %s\n", optarg);
-        FILE *keysFile;
-        keysFile = fopen(optarg, "w+");
-
-        for (int i = 0; i <= QTTCARACTERES; i++)
-        {
-            if (dictKeys[i].p != 0)
-            {
-                fputc(dictKeys[i].p, keysFile);
-                fputs(": ", keysFile);
-
-                KEYS *list = dictKeys[i].keysList;
-                while (list != NULL)
-                {
-                    char str[10];
-                    sprintf(str, "%d", list->key); // copia inteiro para string
-                    // fwrite(str, sizeof(char), sizeof(DICT)*QTTCARACTERES, keysFile);
-                    fputs(str, keysFile);
-                    fputs(" ", keysFile);
-                    list = list->next;
-                }
-                fputs("\n", keysFile);
-            }
-        }
-
-        fclose(keysFile);
-    }
-    else
+    if (!cflag) // gera arquivo de chaves somente se houver opção -c
     {
         fprintf(stderr, "\nATENÇÃO: Argumento -c não consta.\nArquivo com chaves não será gerado\n");
     }
+
+    fprintf(stdout, "\nWriting keys file: %s\n", optarg);
+    FILE *keysFile;
+    keysFile = fopen(optarg, "w+");
+
+    for (int i = 0; i <= QTTCARACTERES; i++)
+    {
+        if (dictKeys[i].p != 0)
+        {
+            fputc(dictKeys[i].p, keysFile);
+            fputs(": ", keysFile);
+
+            KEYS *list = dictKeys[i].keysList;
+            while (list != NULL)
+            {
+                char str[10];
+                sprintf(str, "%d", list->key); // copia inteiro para string
+                // fwrite(str, sizeof(char), sizeof(DICT)*QTTCARACTERES, keysFile);
+                fputs(str, keysFile);
+                fputs(" ", keysFile);
+                list = list->next;
+            }
+            fputs("\n", keysFile);
+        }
+    }
+
+    fclose(keysFile);
 }
 
 // Busca um determinado caracter no dicionario. Retorna -1 caso não encontre, ou a posição no dicionario caso encontre.
@@ -162,49 +160,54 @@ int getRandomKey(DICT dictKeys[], int position)
 // Codifica mensagem
 char *encodeMessage(int mflag, char message[], DICT dictKeys[])
 {
-    char *output = malloc(sizeof(char) * LINESIZE);
-
-    if (mflag && message != NULL)
-    {
-        int position;
-        int key;
-
-        for (int i = 0; i < strlen(message); i++)
-        {
-            position = searchChar(message[i], dictKeys);
-            key = getRandomKey(dictKeys, position);
-            char str[10];
-            sprintf(str, "%d", key); // copia inteiro para string
-            strcat(output, str);
-            strcat(output, " ");
-        }
-    }
-    else
+    if (!mflag)
     {
         fprintf(stderr, "\nATENÇÃO: Argumento -m não consta.\nNão será possível codificar mensagem\n");
         exit(EXIT_FAILURE);
     }
+    int position, key;
+    FILE *msg;
+    msg = fopen(message, "r");
+    checkFileOpening(msg);
+
+    char c = fgetc(msg), *output = malloc(sizeof(char) * LINESIZE);
+    while (c != EOF)
+    {
+        position = searchChar(c, dictKeys);
+        key = getRandomKey(dictKeys, position);
+        char str[10];
+        sprintf(str, "%d", key); // copia inteiro para string
+        strcat(output, str);
+        strcat(output, " ");
+        c = fgetc(msg);
+    }
+
+    fclose(msg);
 
     return output;
 }
 
 // Escreve arquivo de saída
-void generateOutputFile(int oflag, char filename[], char encodedMessage[])
+void generateOutputFile(int oflag, int encode, char filename[], char encodedMessage[])
 {
-    if (oflag)
-    {
-        FILE *output;
-        output = fopen(filename, "w+");
-        checkFileOpening(output);
-        fputs(encodedMessage, output);
-
-        fclose(output);
-    }
-    else
+    if (!oflag && encode) // encode
     {
         fprintf(stderr, "\nATENÇÃO: Argumento -o não consta.\nArquivo com mensagem codificada não será gerado\n");
     }
+    else if (!oflag && !encode) // decode
+    {
+        fprintf(stderr, "\nATENÇÃO: Argumento -o não consta.\nArquivo com mensagem decodificada não será gerado\n");
+        exit(EXIT_FAILURE);
+    }
+
+    FILE *output;
+    output = fopen(filename, "w+");
+    checkFileOpening(output);
+    fputs(encodedMessage, output);
+    fclose(output);
 }
+
+// Completa dicionário com caracteres especiais da tabela ASCII
 void completeDictKeys(DICT dictKeys[])
 {
     int key = -1;
@@ -251,6 +254,7 @@ void loadKeyFile(DICT dictKeys[], char filename[])
     fclose(keyFile);
 }
 
+// Cria dicionário de chaves a partir de livro cifra
 void createDictKeys(int bflag, char *livroFilename, DICT dictKeys[])
 {
     if (!bflag)
@@ -277,6 +281,7 @@ void createDictKeys(int bflag, char *livroFilename, DICT dictKeys[])
     completeDictKeys(dictKeys);
 }
 
+// Retorna letra correspondente a chave ou -1 caso não encontre
 char searchKey(DICT dictKeys[], int key)
 {
     char p;
@@ -300,6 +305,7 @@ char searchKey(DICT dictKeys[], int key)
     return -1;
 }
 
+// Decodifica a mensagem a partir do arquivo de entrada
 void decodeOriginalMessage(DICT dictKeys[], int iflag, char message[], char decoded[])
 {
     if (!iflag)
@@ -309,17 +315,12 @@ void decodeOriginalMessage(DICT dictKeys[], int iflag, char message[], char deco
     }
 
     int key;
-    char aux[2];
-    char output[LINESIZE + 1];
-    memset(output, 0, LINESIZE + 1); // evita lixo de memória
-                                     // pega caracteres até encontrar espaço
-                                     // converte para número
-                                     // pesquisa caractere válido
+    char aux[2], output[LINESIZE + 1], word[LINESIZE + 1];
+    memset(output, 0, LINESIZE + 1);
+    memset(word, 0, LINESIZE + 1);
 
     FILE *f;
 
-    char word[LINESIZE + 1];
-    memset(word, 0, LINESIZE + 1);
     f = fopen(message, "r");
     checkFileOpening(f);
 
@@ -333,7 +334,7 @@ void decodeOriginalMessage(DICT dictKeys[], int iflag, char message[], char deco
 
             if (aux[0] == -1) // tratamento de erro para chave inválida
             {
-                aux[0] = '*';
+                fprintf(stderr, "Não existe nenhuma letra que corresponda a chave %d\n\n", key);
             }
             aux[1] = '\0';
 
@@ -344,14 +345,15 @@ void decodeOriginalMessage(DICT dictKeys[], int iflag, char message[], char deco
     strcpy(decoded, output);
 }
 
+// Libera memória do dicionário
+void freeDict (DICT dict[]){
+    for (int i = 0; i < QTTCARACTERES; i++) {
+        free(dict[i].keysList);
+    }
+}
+
 int main(int argc, char *argv[])
 {
-    // codificar
-    //./beale  -e  -b LivroCifra -m MensagemOriginal -o MensagemCodificada -c ArquivoDeChaves
-
-    // decodificar
-    //./beale  -d  -i MensagemCodificada  -c ArquivoDeChaves  -o MensagemDecodificada
-    //./beale -d -i MensagemCodificada -b LivroCifra -o MensagemDecodificada
 
     int option,
         encode = FALSE,
@@ -414,11 +416,14 @@ int main(int argc, char *argv[])
             }
             else
             {
-                fprintf(stderr, "ERRO: argumento -i só é usado com o parâmetro -d (decode)");
+                fprintf(stderr, "ERRO: Argumento -i só é usado com o parâmetro -d (decode)");
             }
             break;
 
-        case '?': // mensagem de erro
+        default: // mensagem de erro
+            fprintf(stderr, "\nCodificação:\n-e\n\n-b: livro cifra;\n-c: arquivo de chaves a ser escrito;\n-o: arquivo de saída para mensagem codificada; \n-m: mensagem original\n\nDecodificação:\n-d\n-b: livro cifra;\n-c: arquivo de chaves;\n-o: saída da mensagem decodificada;\n-i: entrada da mensagem codificada\n");
+            exit(EXIT_FAILURE);
+
             break;
         }
     }
@@ -431,11 +436,9 @@ int main(int argc, char *argv[])
         createDictKeys(bflag, livroFilename, dictKeys); // gera dicionário de chaves
 
         strcpy(output, encodeMessage(mflag, originalMsg, dictKeys)); // codifica mensagem
-        fprintf(stdout, "%s\n", output);
-
-        generateOutputFile(oflag, outputFile, output); // gera arquivo com mensagem codificada
-
+        fprintf(stdout, "Output: %s\n", output);
         writeFile(cflag, dictKeys, keysFile);
+        generateOutputFile(oflag, encode, outputFile, output); // gera arquivo com mensagem codificada
     }
     else
     {
@@ -450,9 +453,8 @@ int main(int argc, char *argv[])
         }
 
         decodeOriginalMessage(dictKeys, iflag, originalMsg, output);
-        generateOutputFile(oflag, outputFile, output); // gera arquivo com mensagem decodificada
-
-        fprintf(stdout, "out: %s\n", output);
+        generateOutputFile(oflag, encode, outputFile, output); // gera arquivo com mensagem decodificada
+        fprintf(stdout, "Output: %s\n", output);
     }
-
+    freeDict(dictKeys);
 }
