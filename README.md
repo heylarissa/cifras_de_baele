@@ -18,6 +18,6 @@
 #### Outros requisitos
 [ ] Makefile
 [ ] Codificar letras que não existem no livro cifra
-[ ] Permitir que os comandos sejam inputados em diferentes ordens
-
+[x] Permitir que os comandos sejam inputados em diferentes ordens
+[x] Compilar em C99
 ![Beale](https://user-images.githubusercontent.com/57672954/232651219-eaab62db-df86-4fea-aca0-d2f05a79e78a.jpg)

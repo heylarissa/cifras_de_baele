@@ -22,6 +22,7 @@ typedef struct dict
     KEYS *keysList;
 } DICT;
 
+// verifica abertura de arquivo
 void checkFileOpening(FILE *file)
 {
     if (!file)
@@ -31,6 +32,7 @@ void checkFileOpening(FILE *file)
     }
 }
 
+// aloca espaço no dicionario
 void initDictKeys(DICT dictKeys[])
 {
     for (int i = 0; i <= QTTCARACTERES; i++)
@@ -40,6 +42,7 @@ void initDictKeys(DICT dictKeys[])
     }
 }
 
+// escreve arquivo de chaves
 void writeFile(DICT dictKeys[], char *optarg)
 {
     fprintf(stdout, "Writing keys file: %s\n", optarg);
@@ -69,6 +72,7 @@ void writeFile(DICT dictKeys[], char *optarg)
     fclose(keysFile);
 }
 
+// Busca um determinado caracter no dicionario. Retorna -1 caso não encontre, ou a posição no dicionario caso encontre.
 int searchChar(char letter, DICT dict[])
 {
     for (int i = 0; i <= QTTCARACTERES; i++)
@@ -81,6 +85,7 @@ int searchChar(char letter, DICT dict[])
     return -1;
 }
 
+// Cria nodo na lista de chaves
 KEYS *createNode(int key, KEYS *keyList)
 {
     KEYS *aux;
@@ -90,6 +95,7 @@ KEYS *createNode(int key, KEYS *keyList)
     return aux;
 }
 
+// Insere um novo caracter no dicionário
 void insertKey(DICT dictKeys[], int key, char letter)
 {
     int position = searchChar(letter, dictKeys);
@@ -106,6 +112,7 @@ void insertKey(DICT dictKeys[], int key, char letter)
     }
 }
 
+// Retorna o tamanho da lista
 int getListSize(KEYS *list)
 {
     int tam = 0;
@@ -121,7 +128,7 @@ int getListSize(KEYS *list)
     return tam;
 }
 
-// pega chave aleatória de uma determinada letra do dicionário
+// Pega chave aleatória de uma determinada letra do dicionário
 int getRandomKey(DICT dictKeys[], int position)
 {
 
@@ -140,15 +147,16 @@ int getRandomKey(DICT dictKeys[], int position)
         }
         list = list->next;
     }
-    printf("key escolhida: %d\n", key);
+
     return key;
 }
 
+// Codifica mensagem
 char *encodeMessage(char message[], DICT dictKeys[])
 {
     int position;
     int key;
-    char *output = malloc(sizeof(char)*LINESIZE);
+    char *output = malloc(sizeof(char) * LINESIZE);
 
     for (int i = 0; i < strlen(message); i++)
     {
@@ -172,6 +180,7 @@ char *encodeMessage(char message[], DICT dictKeys[])
     return output;
 }
 
+// Escreve arquivo de saída
 void generateOutputFile(char optarg[], char encodedMessage[])
 {
     FILE *output;
@@ -182,22 +191,41 @@ void generateOutputFile(char optarg[], char encodedMessage[])
     fclose(output);
 }
 
-void loadKeyFile(DICT dictKeys[], char optarg[])
+// EXCLUIR ANTES DE ENTREGAR
+void printDictKeys(DICT dict[])
+{
+    KEYS *keysTemp;
+    keysTemp = dict->keysList;
+    for (int i = 0; i <= QTTCARACTERES; i++)
+    {
+        printf("%c: ", dict->p);
+        while (keysTemp != NULL) {
+            printf("%d ", keysTemp->key);
+            keysTemp = keysTemp->next;
+        }
+        printf("\n");
+    }
+}
+
+// NÃO IMPLEMENTADA Carrega arquivo de chaves na memória
+void loadKeyFile(DICT dictKeys[], char filename[])
 {
     FILE *keyFile;
     char word[LINESIZE + 1];
 
-    keyFile = fopen(optarg, "r");
+    keyFile = fopen(filename, "r");
     checkFileOpening(keyFile);
 
     int key = 0;
     while (!feof(keyFile))
     {
         fscanf(keyFile, "%s[^\n]", word);
-        insertKey(dictKeys, key, word[0]);
+        printf("%s\n", word);
+        //insertKey(dictKeys, key, word[0]); // arrumar
         key++;
     }
     fclose(keyFile);
+    //printDictKeys(dictKeys);
 }
 
 int main(int argc, char *argv[])
@@ -218,7 +246,7 @@ int main(int argc, char *argv[])
     int encode = FALSE, cflag = FALSE;
     char word[LINESIZE + 1];
 
-    char output[LINESIZE], originalMsg[LINESIZE], outputFile[LINESIZE + 1];
+    char output[LINESIZE], originalMsg[LINESIZE], outputFile[LINESIZE + 1], keysFile[LINESIZE + 1];
 
     while ((option = getopt(argc, argv, "edb:c:m:o:i:")) != -1)
     {
@@ -252,14 +280,12 @@ int main(int argc, char *argv[])
 
         case 'c': // escreve arquivo de chaves
             cflag = TRUE;
-            if (!encode)
-            {
-                loadKeyFile(dictKeys, optarg);
-            }
+            strcpy(keysFile, optarg);
+
             break;
 
         case 'i':
-            // decode
+            // mensagem codificada
             break;
 
         case '?':
@@ -285,7 +311,12 @@ int main(int argc, char *argv[])
         generateOutputFile(outputFile, output);
         if (cflag)
         {
-            writeFile(dictKeys, optarg);
+            writeFile(dictKeys, keysFile);
         }
+    }
+
+    else if (cflag)
+    {
+        loadKeyFile(dictKeys, keysFile);
     }
 }
