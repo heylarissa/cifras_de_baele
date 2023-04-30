@@ -369,9 +369,8 @@ int main(int argc, char *argv[])
                 strcpy(originalMsg, optarg);
             }
             else
-            {
                 fprintf(stderr, "ERRO: argumento -m só é usado com o parâmetro -e (encode)");
-            }
+    
             break;
 
         case 'o': // cria arquivo de saída
