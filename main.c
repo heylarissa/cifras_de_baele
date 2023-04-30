@@ -121,6 +121,7 @@ int getListSize(KEYS *list)
     return tam;
 }
 
+// pega chave aleatória de uma determinada letra do dicionário
 int getRandomKey(DICT dictKeys[], int position)
 {
 
@@ -139,6 +140,7 @@ int getRandomKey(DICT dictKeys[], int position)
         }
         list = list->next;
     }
+    printf("key escolhida: %d\n", key);
     return key;
 }
 
@@ -179,6 +181,25 @@ void generateOutputFile(char optarg[], char encodedMessage[])
 
     fclose(output);
 }
+
+void loadKeyFile(DICT dictKeys[], char optarg[])
+{
+    FILE *keyFile;
+    char word[LINESIZE + 1];
+
+    keyFile = fopen(optarg, "r");
+    checkFileOpening(keyFile);
+
+    int key = 0;
+    while (!feof(keyFile))
+    {
+        fscanf(keyFile, "%s[^\n]", word);
+        insertKey(dictKeys, key, word[0]);
+        key++;
+    }
+    fclose(keyFile);
+}
+
 int main(int argc, char *argv[])
 {
     // codificar
@@ -190,7 +211,6 @@ int main(int argc, char *argv[])
 
     FILE *livroCifra;
     DICT dictKeys[QTTCARACTERES + 1];
-    int dictTam;
 
     initDictKeys(dictKeys);
 
@@ -198,7 +218,7 @@ int main(int argc, char *argv[])
     int encode = FALSE;
     char word[LINESIZE + 1];
 
-    char encodedMessage[LINESIZE];
+    char output[LINESIZE];
 
     while ((option = getopt(argc, argv, "edb:c:m:o:i:")) != -1)
     {
@@ -228,18 +248,23 @@ int main(int argc, char *argv[])
             break;
 
         case 'm': // mensagem original;
-            strcpy(encodedMessage, encodeMessage(optarg, dictKeys));
-            fprintf(stdout, "%s\n", encodedMessage);
-
+        printf("%s\n", optarg);
+            strcpy(output, encodeMessage(optarg, dictKeys));
+            fprintf(stdout, "%s\n", output);
             break;
-        case 'o': // mensagem codificada
-            generateOutputFile(optarg, encodedMessage);
+
+        case 'o': // cria arquivo de saída
+            generateOutputFile(optarg, output);
             break;
 
         case 'c': // escreve arquivo de chaves
             if (encode)
             {
                 writeFile(dictKeys, optarg);
+            }
+            else
+            {
+                loadKeyFile(dictKeys, optarg);
             }
             break;
 

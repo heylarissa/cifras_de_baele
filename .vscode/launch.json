@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/beale",
-            "args": ["-e", "-b", "livro_cifra.txt"],
+            "args": ["-e", "-b", "livro_cifra.txt", "-m", "casa", "-o", "exemplo.txt"],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",
             "environment": [],
