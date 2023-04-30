@@ -301,26 +301,31 @@ void decodeOriginalMessage(DICT dictKeys[], int iflag, char message[])
     if (access(message, F_OK) == 0)
     {
         FILE *f;
+        char line[LINESIZE + 1];
+
         char word[LINESIZE + 1];
-        memset(word, 0, LINESIZE);
+        memset(word, 0, LINESIZE + 1);
         f = fopen(message, "r");
         checkFileOpening(f);
         int i = 0;
         while (!feof(f))
         {
-            fscanf(f, "%s[^ ]", word);
-            key = atoi(word);
-            printf("i: %d key: %d\n", i, key);
-            aux[0] = searchKey(dictKeys, key);
 
-            if (aux[0] == -1) // tratamento de erro para chave inválida
+            if (fscanf(f, "%s", word) != EOF)
             {
-                aux[0] = '*';
-            }
-            aux[1] = '\0';
+                key = atoi(word);
+                printf("i: %d key: %d\n", i, key);
+                aux[0] = searchKey(dictKeys, key);
 
-            strcat(output, aux);
-            i++;
+                if (aux[0] == -1) // tratamento de erro para chave inválida
+                {
+                    aux[0] = '*';
+                }
+                aux[1] = '\0';
+
+                strcat(output, aux);
+                i++;
+            }
         }
         printf("out: %s\n", output);
     }
