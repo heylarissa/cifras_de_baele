@@ -105,7 +105,7 @@ KEYS *createNode(int key, KEYS *keyList)
     return aux;
 }
 
-// Insere um novo caractere no dicionário
+// Insere um novo caractere ou chave no dicionário
 void insertKey(DICT dictKeys[], int key, char letter)
 {
     int position = searchChar(letter, dictKeys);
@@ -205,27 +205,6 @@ void generateOutputFile(int oflag, char filename[], char encodedMessage[])
         fprintf(stderr, "\nATENÇÃO: Argumento -o não consta.\nArquivo com mensagem codificada não será gerado\n");
     }
 }
-
-// NÃO IMPLEMENTADA Carrega arquivo de chaves na memória
-void loadKeyFile(DICT dictKeys[], char filename[])
-{
-    FILE *keyFile;
-    char word[LINESIZE + 1];
-
-    keyFile = fopen(filename, "r");
-    checkFileOpening(keyFile);
-
-    int key = 0;
-    while (!feof(keyFile))
-    {
-        fscanf(keyFile, "%s[^\n]", word);
-        printf("%s\n", word);
-        // insertKey(dictKeys, key, word[0]); // arrumar
-        key++;
-    }
-    fclose(keyFile);
-}
-
 void completeDictKeys(DICT dictKeys[])
 {
     int key = -1;
@@ -234,6 +213,42 @@ void completeDictKeys(DICT dictKeys[])
         insertKey(dictKeys, key, i);
         key--;
     }
+}
+
+// Carrega arquivo de chaves na memória
+void loadKeyFile(DICT dictKeys[], char filename[])
+{
+    FILE *keyFile;
+    char word[LINESIZE + 1];
+
+    keyFile = fopen(filename, "r");
+    checkFileOpening(keyFile);
+
+    int letter, key;
+    while (fscanf(keyFile, "%s", word) != EOF)
+    {
+        if (strchr(word, ':') != NULL) // se possui : é uma letra
+        {
+            letter = word[0];
+            dictKeys[letter].p = letter; // insere na posição do dicionario correspondente ao caracter
+        }
+        else
+        {
+            key = atoi(word);
+
+            int tam = getListSize(dictKeys[letter].keysList);
+            if (tam == 1 && dictKeys[letter].keysList->key == 0) // remover 0 extra da lista
+            {
+                dictKeys[letter].keysList->key = key;
+            }
+            else
+            {
+                dictKeys[letter].keysList = createNode(key, dictKeys[letter].keysList);
+            }
+        }
+    }
+
+    fclose(keyFile);
 }
 
 void createDictKeys(int bflag, char *livroFilename, DICT dictKeys[])
@@ -297,49 +312,25 @@ void decodeOriginalMessage(DICT dictKeys[], int iflag, char message[], char deco
     char aux[2];
     char output[LINESIZE + 1];
     memset(output, 0, LINESIZE + 1); // evita lixo de memória
-    // pega caracteres até encontrar espaço
-    // converte para número
-    // pesquisa caractere válido
+                                     // pega caracteres até encontrar espaço
+                                     // converte para número
+                                     // pesquisa caractere válido
 
-    if (access(message, F_OK) == 0)
+    FILE *f;
+
+    char word[LINESIZE + 1];
+    memset(word, 0, LINESIZE + 1);
+    f = fopen(message, "r");
+    checkFileOpening(f);
+
+    while (!feof(f))
     {
-        FILE *f;
 
-        char word[LINESIZE + 1];
-        memset(word, 0, LINESIZE + 1);
-        f = fopen(message, "r");
-        checkFileOpening(f);
-
-        while (!feof(f))
+        if (fscanf(f, "%s", word) != EOF)
         {
-
-            if (fscanf(f, "%s", word) != EOF)
-            {
-                key = atoi(word);
-                aux[0] = searchKey(dictKeys, key);
-
-                if (aux[0] == -1) // tratamento de erro para chave inválida
-                {
-                    aux[0] = '*';
-                }
-                aux[1] = '\0';
-
-                strcat(output, aux);
-            }
-        }
-    }
-    else
-    {
-        char *word = strtok(message, " ");
-
-        int x = 0;
-        while (word)
-        {
-            // converte string para int
             key = atoi(word);
-
-            // busca key
             aux[0] = searchKey(dictKeys, key);
+
             if (aux[0] == -1) // tratamento de erro para chave inválida
             {
                 aux[0] = '*';
@@ -347,9 +338,6 @@ void decodeOriginalMessage(DICT dictKeys[], int iflag, char message[], char deco
             aux[1] = '\0';
 
             strcat(output, aux);
-
-            word = strtok(NULL, " ");
-            x++;
         }
     }
 
@@ -454,6 +442,7 @@ int main(int argc, char *argv[])
         if (cflag)
         {
             loadKeyFile(dictKeys, keysFile);
+            completeDictKeys(dictKeys);
         }
         else
         {
@@ -461,6 +450,9 @@ int main(int argc, char *argv[])
         }
 
         decodeOriginalMessage(dictKeys, iflag, originalMsg, output);
+        generateOutputFile(oflag, outputFile, output); // gera arquivo com mensagem decodificada
+
         fprintf(stdout, "out: %s\n", output);
     }
+
 }

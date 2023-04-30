@@ -3,15 +3,17 @@
 ### Funcionalidades
 
 #### Funções de codificação
+[] Receber input em arquivo
 [x] Abrir livro cifra  
 [x] Load chaves na memória  
 [x] Cria arquivo de chaves  
 [x] Busca letra da mensagem original na lista de chaves  
 
 #### Funções de decodificação
-[ ] Carregar arquivo de chaves na memória  
+[x] Carregar arquivo de chaves na memória  
 [x] Load chaves na memória (livro cifra)  
 [x] Busca código da chave na memória  
+[x] Escrever em arquivo de saída
 
 #### Outros requisitos
 [ ] Makefile
