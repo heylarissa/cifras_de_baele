@@ -238,31 +238,28 @@ void completeDictKeys(DICT dictKeys[])
 
 void createDictKeys(int bflag, char *livroFilename, DICT dictKeys[])
 {
-    if (bflag)
-    {
-        FILE *livroCifra;
-
-        char word[LINESIZE + 1];
-        int key = 0;
-
-        livroCifra = fopen(livroFilename, "r");
-        checkFileOpening(livroCifra);
-
-        while (!feof(livroCifra))
-        {
-            fscanf(livroCifra, "%s[^\n]", word);
-            insertKey(dictKeys, key, word[0]);
-            key++;
-        }
-
-        fclose(livroCifra);
-        completeDictKeys(dictKeys);
-    }
-    else
+    if (!bflag)
     {
         fprintf(stderr, "ERRO: Não existe argumento -b indicando arquivo do livro cifra.\n");
         exit(EXIT_FAILURE);
     }
+    FILE *livroCifra;
+
+    char word[LINESIZE + 1];
+    int key = 0;
+
+    livroCifra = fopen(livroFilename, "r");
+    checkFileOpening(livroCifra);
+
+    while (!feof(livroCifra))
+    {
+        fscanf(livroCifra, "%s[^\n]", word);
+        insertKey(dictKeys, key, word[0]);
+        key++;
+    }
+
+    fclose(livroCifra);
+    completeDictKeys(dictKeys);
 }
 
 char searchKey(DICT dictKeys[], int key)
@@ -288,8 +285,14 @@ char searchKey(DICT dictKeys[], int key)
     return -1;
 }
 
-void decodeOriginalMessage(DICT dictKeys[], int iflag, char message[])
+void decodeOriginalMessage(DICT dictKeys[], int iflag, char message[], char decoded[])
 {
+    if (!iflag)
+    {
+        fprintf(stderr, "ERRO: É necessário uma mensagem codificada, em formato de string ou arquivo para execução do programa\n\n");
+        exit(EXIT_FAILURE);
+    }
+
     int key;
     char aux[2];
     char output[LINESIZE + 1];
@@ -301,20 +304,18 @@ void decodeOriginalMessage(DICT dictKeys[], int iflag, char message[])
     if (access(message, F_OK) == 0)
     {
         FILE *f;
-        char line[LINESIZE + 1];
 
         char word[LINESIZE + 1];
         memset(word, 0, LINESIZE + 1);
         f = fopen(message, "r");
         checkFileOpening(f);
-        int i = 0;
+
         while (!feof(f))
         {
 
             if (fscanf(f, "%s", word) != EOF)
             {
                 key = atoi(word);
-                printf("i: %d key: %d\n", i, key);
                 aux[0] = searchKey(dictKeys, key);
 
                 if (aux[0] == -1) // tratamento de erro para chave inválida
@@ -324,10 +325,8 @@ void decodeOriginalMessage(DICT dictKeys[], int iflag, char message[])
                 aux[1] = '\0';
 
                 strcat(output, aux);
-                i++;
             }
         }
-        printf("out: %s\n", output);
     }
     else
     {
@@ -340,9 +339,7 @@ void decodeOriginalMessage(DICT dictKeys[], int iflag, char message[])
             key = atoi(word);
 
             // busca key
-
             aux[0] = searchKey(dictKeys, key);
-
             if (aux[0] == -1) // tratamento de erro para chave inválida
             {
                 aux[0] = '*';
@@ -354,8 +351,9 @@ void decodeOriginalMessage(DICT dictKeys[], int iflag, char message[])
             word = strtok(NULL, " ");
             x++;
         }
-        printf("out: %s\n", output);
     }
+
+    strcpy(decoded, output);
 }
 
 int main(int argc, char *argv[])
@@ -462,6 +460,7 @@ int main(int argc, char *argv[])
             createDictKeys(bflag, livroFilename, dictKeys);
         }
 
-        decodeOriginalMessage(dictKeys, iflag, originalMsg);
+        decodeOriginalMessage(dictKeys, iflag, originalMsg, output);
+        fprintf(stdout, "out: %s\n", output);
     }
 }
