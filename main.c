@@ -346,8 +346,10 @@ void decodeOriginalMessage(DICT dictKeys[], int iflag, char message[], char deco
 }
 
 // Libera memória do dicionário
-void freeDict (DICT dict[]){
-    for (int i = 0; i < QTTCARACTERES; i++) {
+void freeDict(DICT dict[])
+{
+    for (int i = 0; i < QTTCARACTERES; i++)
+    {
         free(dict[i].keysList);
     }
 }
