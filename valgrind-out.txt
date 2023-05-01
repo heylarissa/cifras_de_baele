@@ -1,0 +1,220 @@
+==55140== Memcheck, a memory error detector
+==55140== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==55140== Using Valgrind-3.20.0-5147d671e4-20221024 and LibVEX; rerun with -h for copyright info
+==55140== Command: ./beale -e -b livro_cifra.txt -m message.txt -o out.txt -c chaves.txt
+==55140== Parent PID: 3797
+==55140== 
+--55140-- 
+--55140-- Valgrind options:
+--55140--    --leak-check=full
+--55140--    --show-leak-kinds=all
+--55140--    --track-origins=yes
+--55140--    --verbose
+--55140--    --log-file=valgrind-out.txt
+--55140-- Contents of /proc/version:
+--55140--   Linux version 5.15.0-71-generic (buildd@lcy02-amd64-111) (gcc (Ubuntu 9.4.0-1ubuntu1~20.04.1) 9.4.0, GNU ld (GNU Binutils for Ubuntu) 2.34) #78~20.04.1-Ubuntu SMP Wed Apr 19 11:26:48 UTC 2023
+--55140-- 
+--55140-- Arch and hwcaps: AMD64, LittleEndian, amd64-cx16-lzcnt-rdtscp-sse3-ssse3-avx-avx2-bmi-f16c-rdrand-rdseed
+--55140-- Page sizes: currently 4096, max supported 4096
+--55140-- Valgrind library directory: /snap/valgrind/142/usr/libexec/valgrind
+--55140-- Reading syms from /home/larissahey/cifras_de_baele/beale
+--55140-- Reading syms from /usr/lib/x86_64-linux-gnu/ld-2.31.so
+--55140--   Considering /usr/lib/debug/.build-id/45/87364908de169dec62ffa538170118c1c3a078.debug ..
+--55140--   .. build-id is valid
+--55140-- Reading syms from /snap/valgrind/142/usr/libexec/valgrind/memcheck-amd64-linux
+--55140--    object doesn't have a dynamic symbol table
+--55140-- Warning: inlined fn name without absori
+--55140-- is shown as UnknownInlinedFun
+--55140-- Scheduler: using generic scheduler lock implementation.
+--55140-- Reading suppressions file: /snap/valgrind/142/usr/libexec/valgrind/default.supp
+==55140== embedded gdbserver: reading from /tmp/vgdb-pipe-from-vgdb-to-55140-by-larissahey-on-???
+==55140== embedded gdbserver: writing to   /tmp/vgdb-pipe-to-vgdb-from-55140-by-larissahey-on-???
+==55140== embedded gdbserver: shared mem   /tmp/vgdb-pipe-shared-mem-vgdb-55140-by-larissahey-on-???
+==55140== 
+==55140== TO CONTROL THIS PROCESS USING vgdb (which you probably
+==55140== don't want to do, unless you know exactly what you're doing,
+==55140== or are doing some strange experiment):
+==55140==   /snap/valgrind/142/usr/libexec/valgrind/../../bin/vgdb --pid=55140 ...command...
+==55140== 
+==55140== TO DEBUG THIS PROCESS USING GDB: start GDB like this
+==55140==   /path/to/gdb ./beale
+==55140== and then give GDB the following command
+==55140==   target remote | /snap/valgrind/142/usr/libexec/valgrind/../../bin/vgdb --pid=55140
+==55140== --pid is optional if only one valgrind process is running
+==55140== 
+--55140-- REDIR: 0x4022e20 (ld-linux-x86-64.so.2:strlen) redirected to 0x581eb5de (vgPlain_amd64_linux_REDIR_FOR_strlen)
+--55140-- REDIR: 0x4022bf0 (ld-linux-x86-64.so.2:index) redirected to 0x581eb5f8 (vgPlain_amd64_linux_REDIR_FOR_index)
+--55140-- Reading syms from /snap/valgrind/142/usr/libexec/valgrind/vgpreload_core-amd64-linux.so
+--55140-- Reading syms from /snap/valgrind/142/usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so
+==55140== WARNING: new redirection conflicts with existing -- ignoring it
+--55140--     old: 0x04022e20 (strlen              ) R-> (0000.0) 0x581eb5de vgPlain_amd64_linux_REDIR_FOR_strlen
+--55140--     new: 0x04022e20 (strlen              ) R-> (2007.0) 0x04a3efb0 strlen
+--55140-- REDIR: 0x401f600 (ld-linux-x86-64.so.2:strcmp) redirected to 0x4a401e0 (strcmp)
+--55140-- REDIR: 0x4023380 (ld-linux-x86-64.so.2:mempcpy) redirected to 0x4a44400 (mempcpy)
+--55140-- Reading syms from /usr/lib/x86_64-linux-gnu/libc-2.31.so
+--55140--   Considering /usr/lib/debug/.build-id/18/78e6b475720c7c51969e69ab2d276fae6d1dee.debug ..
+--55140--   .. build-id is valid
+==55140== WARNING: new redirection conflicts with existing -- ignoring it
+--55140--     old: 0x04d02250 (memalign            ) R-> (1011.0) 0x04a3e1f5 memalign
+--55140--     new: 0x04d02250 (memalign            ) R-> (1017.0) 0x04a3e1cb aligned_alloc
+==55140== WARNING: new redirection conflicts with existing -- ignoring it
+--55140--     old: 0x04d02250 (memalign            ) R-> (1011.0) 0x04a3e1f5 memalign
+--55140--     new: 0x04d02250 (memalign            ) R-> (1017.0) 0x04a3e1a1 aligned_alloc
+==55140== WARNING: new redirection conflicts with existing -- ignoring it
+--55140--     old: 0x04d02250 (memalign            ) R-> (1011.0) 0x04a3e1f5 memalign
+--55140--     new: 0x04d02250 (memalign            ) R-> (1017.0) 0x04a3e1cb aligned_alloc
+==55140== WARNING: new redirection conflicts with existing -- ignoring it
+--55140--     old: 0x04d02250 (memalign            ) R-> (1011.0) 0x04a3e1f5 memalign
+--55140--     new: 0x04d02250 (memalign            ) R-> (1017.0) 0x04a3e1a1 aligned_alloc
+--55140-- REDIR: 0x4d07480 (libc.so.6:memmove) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+==55140== Preferring higher priority redirection:
+--55140--     old: 0x04df26e0 (__memcpy_avx_unalign) R-> (2018.0) 0x04a41720 __memcpy_avx_unaligned_erms
+--55140--     new: 0x04df26e0 (__memcpy_avx_unalign) R-> (2018.1) 0x04a433e0 memmove
+--55140-- REDIR: 0x4d06780 (libc.so.6:strncpy) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d077b0 (libc.so.6:strcasecmp) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d060a0 (libc.so.6:strcat) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d067e0 (libc.so.6:rindex) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d08c50 (libc.so.6:rawmemchr) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d23ce0 (libc.so.6:wmemchr) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d23820 (libc.so.6:wcscmp) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d075e0 (libc.so.6:mempcpy) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d07410 (libc.so.6:bcmp) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d06710 (libc.so.6:strncmp) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d06150 (libc.so.6:strcmp) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d07540 (libc.so.6:memset) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d237e0 (libc.so.6:wcschr) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d06670 (libc.so.6:strnlen) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d06230 (libc.so.6:strcspn) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d07800 (libc.so.6:strncasecmp) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d061d0 (libc.so.6:strcpy) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d07950 (libc.so.6:memcpy@@GLIBC_2.14) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d24f50 (libc.so.6:wcsnlen) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d23860 (libc.so.6:wcscpy) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d06820 (libc.so.6:strpbrk) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d06100 (libc.so.6:index) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d06630 (libc.so.6:strlen) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d0fbb0 (libc.so.6:memrchr) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d07850 (libc.so.6:strcasecmp_l) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d073d0 (libc.so.6:memchr) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d23930 (libc.so.6:wcslen) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d06ae0 (libc.so.6:strspn) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d07750 (libc.so.6:stpncpy) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d076f0 (libc.so.6:stpcpy) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d08c90 (libc.so.6:strchrnul) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4d078a0 (libc.so.6:strncasecmp_l) redirected to 0x48306e8 (_vgnU_ifunc_wrapper)
+--55140-- REDIR: 0x4def500 (libc.so.6:__strrchr_avx2) redirected to 0x4a3e930 (rindex)
+--55140-- REDIR: 0x4def6d0 (libc.so.6:__strlen_avx2) redirected to 0x4a3eef0 (strlen)
+--55140-- REDIR: 0x4def0e0 (libc.so.6:__strchr_avx2) redirected to 0x4a3eb50 (index)
+--55140-- REDIR: 0x4df0c10 (libc.so.6:__strcpy_avx2) redirected to 0x4a3efd0 (strcpy)
+--55140-- REDIR: 0x4d010e0 (libc.so.6:malloc) redirected to 0x4a39053 (malloc)
+--55140-- REDIR: 0x4d06fa0 (libc.so.6:__GI_strstr) redirected to 0x4a44670 (__strstr_sse2)
+--55140-- REDIR: 0x4d016d0 (libc.so.6:free) redirected to 0x4a3b941 (free)
+==55140== Conditional jump or move depends on uninitialised value(s)
+==55140==    at 0x109FA8: getListSize (dictkey.c:109)
+==55140==    by 0x10A1D4: getRandomKey (encode.c:42)
+==55140==    by 0x10A0FC: encodeMessage (encode.c:25)
+==55140==    by 0x1096CD: main (beale.c:86)
+==55140==  Uninitialised value was created by a heap allocation
+==55140==    at 0x4A390C5: malloc (vg_replace_malloc.c:393)
+==55140==    by 0x109E5D: initDictKeys (dictkey.c:76)
+==55140==    by 0x109684: main (beale.c:80)
+==55140== 
+--55140-- REDIR: 0x4def310 (libc.so.6:__strchrnul_avx2) redirected to 0x4a43f30 (strchrnul)
+--55140-- REDIR: 0x4defb90 (libc.so.6:__strcat_avx2) redirected to 0x4a3eb90 (strcat)
+==55140== Conditional jump or move depends on uninitialised value(s)
+==55140==    at 0x4A3EB96: strcat (vg_replace_strmem.c:331)
+==55140==    by 0x10A12D: encodeMessage (encode.c:28)
+==55140==    by 0x1096CD: main (beale.c:86)
+==55140==  Uninitialised value was created by a heap allocation
+==55140==    at 0x4A390C5: malloc (vg_replace_malloc.c:393)
+==55140==    by 0x10A0CD: encodeMessage (encode.c:20)
+==55140==    by 0x1096CD: main (beale.c:86)
+==55140== 
+--55140-- REDIR: 0x4df26c0 (libc.so.6:__mempcpy_avx_unaligned_erms) redirected to 0x4a44040 (mempcpy)
+==55140== Conditional jump or move depends on uninitialised value(s)
+==55140==    at 0x10A44F: writeFile (filehandler.c:51)
+==55140==    by 0x109722: main (beale.c:88)
+==55140==  Uninitialised value was created by a heap allocation
+==55140==    at 0x4A390C5: malloc (vg_replace_malloc.c:393)
+==55140==    by 0x109E5D: initDictKeys (dictkey.c:76)
+==55140==    by 0x109684: main (beale.c:80)
+==55140== 
+==55140== 
+==55140== HEAP SUMMARY:
+==55140==     in use at exit: 2,209 bytes in 75 blocks
+==55140==   total heap usage: 340 allocs, 265 frees, 25,601 bytes allocated
+==55140== 
+==55140== Searching for pointers to 75 not-freed blocks
+==55140== Checked 72,360 bytes
+==55140== 
+==55140== 80 bytes in 5 blocks are definitely lost in loss record 1 of 5
+==55140==    at 0x4A390C5: malloc (vg_replace_malloc.c:393)
+==55140==    by 0x109E5D: initDictKeys (dictkey.c:76)
+==55140==    by 0x109684: main (beale.c:80)
+==55140== 
+==55140== 192 bytes in 12 blocks are indirectly lost in loss record 2 of 5
+==55140==    at 0x4A390C5: malloc (vg_replace_malloc.c:393)
+==55140==    by 0x109E5D: initDictKeys (dictkey.c:76)
+==55140==    by 0x109684: main (beale.c:80)
+==55140== 
+==55140== 720 bytes in 45 blocks are indirectly lost in loss record 3 of 5
+==55140==    at 0x4A390C5: malloc (vg_replace_malloc.c:393)
+==55140==    by 0x109E94: createNode (dictkey.c:83)
+==55140==    by 0x109F69: insertKey (dictkey.c:100)
+==55140==    by 0x109CF1: createDictKeys (dictkey.c:36)
+==55140==    by 0x1096AF: main (beale.c:84)
+==55140== 
+==55140== 1,025 bytes in 1 blocks are definitely lost in loss record 4 of 5
+==55140==    at 0x4A390C5: malloc (vg_replace_malloc.c:393)
+==55140==    by 0x10A0CD: encodeMessage (encode.c:20)
+==55140==    by 0x1096CD: main (beale.c:86)
+==55140== 
+==55140== 1,104 (192 direct, 912 indirect) bytes in 12 blocks are definitely lost in loss record 5 of 5
+==55140==    at 0x4A390C5: malloc (vg_replace_malloc.c:393)
+==55140==    by 0x109E94: createNode (dictkey.c:83)
+==55140==    by 0x109F69: insertKey (dictkey.c:100)
+==55140==    by 0x109CF1: createDictKeys (dictkey.c:36)
+==55140==    by 0x1096AF: main (beale.c:84)
+==55140== 
+==55140== LEAK SUMMARY:
+==55140==    definitely lost: 1,297 bytes in 18 blocks
+==55140==    indirectly lost: 912 bytes in 57 blocks
+==55140==      possibly lost: 0 bytes in 0 blocks
+==55140==    still reachable: 0 bytes in 0 blocks
+==55140==         suppressed: 0 bytes in 0 blocks
+==55140== 
+==55140== ERROR SUMMARY: 95 errors from 6 contexts (suppressed: 0 from 0)
+==55140== 
+==55140== 1 errors in context 1 of 6:
+==55140== Conditional jump or move depends on uninitialised value(s)
+==55140==    at 0x4A3EB96: strcat (vg_replace_strmem.c:331)
+==55140==    by 0x10A12D: encodeMessage (encode.c:28)
+==55140==    by 0x1096CD: main (beale.c:86)
+==55140==  Uninitialised value was created by a heap allocation
+==55140==    at 0x4A390C5: malloc (vg_replace_malloc.c:393)
+==55140==    by 0x10A0CD: encodeMessage (encode.c:20)
+==55140==    by 0x1096CD: main (beale.c:86)
+==55140== 
+==55140== 
+==55140== 22 errors in context 2 of 6:
+==55140== Conditional jump or move depends on uninitialised value(s)
+==55140==    at 0x109FA8: getListSize (dictkey.c:109)
+==55140==    by 0x10A1D4: getRandomKey (encode.c:42)
+==55140==    by 0x10A0FC: encodeMessage (encode.c:25)
+==55140==    by 0x1096CD: main (beale.c:86)
+==55140==  Uninitialised value was created by a heap allocation
+==55140==    at 0x4A390C5: malloc (vg_replace_malloc.c:393)
+==55140==    by 0x109E5D: initDictKeys (dictkey.c:76)
+==55140==    by 0x109684: main (beale.c:80)
+==55140== 
+==55140== 
+==55140== 69 errors in context 3 of 6:
+==55140== Conditional jump or move depends on uninitialised value(s)
+==55140==    at 0x10A44F: writeFile (filehandler.c:51)
+==55140==    by 0x109722: main (beale.c:88)
+==55140==  Uninitialised value was created by a heap allocation
+==55140==    at 0x4A390C5: malloc (vg_replace_malloc.c:393)
+==55140==    by 0x109E5D: initDictKeys (dictkey.c:76)
+==55140==    by 0x109684: main (beale.c:80)
+==55140== 
+==55140== ERROR SUMMARY: 95 errors from 6 contexts (suppressed: 0 from 0)

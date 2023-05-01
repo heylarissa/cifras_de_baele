@@ -1,5 +1,8 @@
 # Cifras de Beale
 
+Aluna: Larissa Hey D'Andrade
+GRR: 20196473
+
 ### Funcionalidades
 
 #### Funções de codificação
@@ -16,17 +19,29 @@
 [x] Escrever em arquivo de saída
 
 #### Outros requisitos
-[ ] Makefile
+[x] Makefile
 [x] Codificar letras que não existem no livro cifra
 [x] Permitir que os comandos sejam inputados em diferentes ordens
 [x] Compilar em C99
 
-![Beale](https://user-images.githubusercontent.com/57672954/232651219-eaab62db-df86-4fea-aca0-d2f05a79e78a.jpg)
+### Estrutura de dados
+Para carregar as chaves em memória, foram criadas duas estruturas.
+A estrutura principal é o vetor de dicionários de tamanho de 256 caracteres, enquanto que a outra é uma lista simplesmente ligada que contem todas as chaves correspondentes aquele caracter.
+Dessa forma é possível acessar de maneira simples a letra desejada.
+
+### Fluxograma
+Os métodos criados foram feitos com objetivo de atender o seguinte fluxo:  
+![Beale](Fluxograma.jpg)
 
 ### Execução
-    Codificar
+
+#### Compilando*
+    make beale  
+
+#### Executando
+##### *Codificar*
     ./beale  -e  -b LivroCifra -m MensagemOriginal -o MensagemCodificada -c ArquivoDeChaves
 
-    Decodificar
+##### *Decodificar*
     ./beale  -d  -i MensagemCodificada  -c ArquivoDeChaves  -o MensagemDecodificada  
     ./beale -d -i MensagemCodificada -b LivroCifra -o MensagemDecodificada
