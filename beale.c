@@ -76,7 +76,8 @@ int main(int argc, char *argv[])
         }
     }
 
-    DICT dictKeys[QTTCARACTERES + 1];
+    DICT *dictKeys;
+    dictKeys = malloc((QTTCARACTERES + 1)*sizeof(DICT));
     initDictKeys(dictKeys);
 
     if (encode)
@@ -103,5 +104,5 @@ int main(int argc, char *argv[])
         generateOutputFile(oflag, encode, outputFile, output); // gera arquivo com mensagem decodificada
     }
     freeDict(dictKeys);
-    
+    free(dictKeys);
 }

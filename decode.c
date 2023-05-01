@@ -28,7 +28,7 @@ void loadKeyFile(DICT dictKeys[], char filename[])
             if (tam == 1 && dictKeys[letter].keysList->key == 0)
                 dictKeys[letter].keysList->key = key; // remover 0 extra da lista
             else
-                createNode(key, dictKeys[letter].keysList);
+                dictKeys[letter].keysList = createNode(key, dictKeys[letter].keysList);
         }
     }
     fclose(keyFile);

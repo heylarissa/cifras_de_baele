@@ -31,7 +31,7 @@ Dessa forma é possível acessar de maneira simples a letra desejada.
 
 ### Fluxograma
 Os métodos criados foram feitos com objetivo de atender o seguinte fluxo:  
-![Beale](Fluxograma.jpg)
+![Beale](fluxograma.jpg)
 
 ### Execução
 

@@ -73,18 +73,17 @@ void initDictKeys(DICT dictKeys[])
     for (int i = 0; i <= QTTCARACTERES; i++)
     {
         dictKeys[i].p = 0;
-        dictKeys[i].keysList = malloc(sizeof(KEYS));
+        dictKeys[i].keysList = calloc(1, sizeof(KEYS));
     }
 }
 
-void createNode(int key, KEYS *keyList)
+KEYS *createNode(int key, KEYS *keyList)
 {
     KEYS *aux;
     aux = malloc(sizeof(KEYS));
     aux->key = key;
     aux->next = keyList;
-    keyList = aux;
-    free(aux);
+    return aux;
 }
 
 void insertKey(DICT dictKeys[], int key, char letter)
@@ -98,7 +97,7 @@ void insertKey(DICT dictKeys[], int key, char letter)
         dictKeys[l].keysList->key = key;
     }
     else if (key >= 0)
-        createNode(key, dictKeys[position].keysList);
+        dictKeys[position].keysList = createNode(key, dictKeys[position].keysList);
 }
 
 int getListSize(KEYS *list)

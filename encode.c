@@ -17,7 +17,10 @@ void encodeMessage(int mflag, char message[], DICT dictKeys[], char out[])
     FILE *msg;
     msg = fopen(message, "r");
     checkFileOpening(msg);
-    char c = fgetc(msg), *output = malloc(sizeof(char) * (LINESIZE + 1));
+    char c = fgetc(msg);
+    char *output;
+    output = malloc((LINESIZE + 1) * sizeof(char));
+    memset(output, 0, (LINESIZE + 1));
 
     while (c != EOF)
     {
@@ -32,8 +35,6 @@ void encodeMessage(int mflag, char message[], DICT dictKeys[], char out[])
 
     fclose(msg);
     strcpy(out, output);
-    free(output);
-
 }
 
 int getRandomKey(DICT dictKeys[], int position)
