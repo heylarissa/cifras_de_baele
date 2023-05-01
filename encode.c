@@ -5,7 +5,7 @@
 #include <string.h>
 #include "filehandler.h"
 
-char *encodeMessage(int mflag, char message[], DICT dictKeys[])
+void encodeMessage(int mflag, char message[], DICT dictKeys[], char out[])
 {
     if (!mflag)
     {
@@ -31,8 +31,9 @@ char *encodeMessage(int mflag, char message[], DICT dictKeys[])
     }
 
     fclose(msg);
+    strcpy(out, output);
+    free(output);
 
-    return output;
 }
 
 int getRandomKey(DICT dictKeys[], int position)

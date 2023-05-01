@@ -83,7 +83,7 @@ int main(int argc, char *argv[])
     {
         createDictKeys(bflag, livroFilename, dictKeys); // gera dicionário de chaves
 
-        strcpy(output, encodeMessage(mflag, originalMsg, dictKeys)); // codifica mensagem
+        encodeMessage(mflag, originalMsg, dictKeys, output); // codifica mensagem
         fprintf(stdout, "Output: %s\n", output);
         writeFile(cflag, dictKeys, keysFile);
         generateOutputFile(oflag, encode, outputFile, output); // gera arquivo com mensagem codificada
