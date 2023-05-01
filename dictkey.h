@@ -31,7 +31,7 @@ void freeDict(DICT dict[]);
 void initDictKeys(DICT dictKeys[]);
 
 // Cria nodo na lista de chaves
-KEYS *createNode(int key, KEYS *keyList);
+void createNode(int key, KEYS *keyList);
 
 // Insere um novo caractere ou chave no dicionário
 void insertKey(DICT dictKeys[], int key, char letter);

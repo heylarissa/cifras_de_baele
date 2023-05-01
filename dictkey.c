@@ -77,13 +77,14 @@ void initDictKeys(DICT dictKeys[])
     }
 }
 
-KEYS *createNode(int key, KEYS *keyList)
+void createNode(int key, KEYS *keyList)
 {
     KEYS *aux;
     aux = malloc(sizeof(KEYS));
     aux->key = key;
     aux->next = keyList;
-    return aux;
+    keyList = aux;
+    free(aux);
 }
 
 void insertKey(DICT dictKeys[], int key, char letter)
@@ -97,7 +98,7 @@ void insertKey(DICT dictKeys[], int key, char letter)
         dictKeys[l].keysList->key = key;
     }
     else if (key >= 0)
-        dictKeys[position].keysList = createNode(key, dictKeys[position].keysList);
+        createNode(key, dictKeys[position].keysList);
 }
 
 int getListSize(KEYS *list)
