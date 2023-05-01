@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "string.h": "c",
+        "decode.h": "c",
+        "stdio.h": "c",
+        "filehandler.h": "c",
+        "stdlib.h": "c",
+        "getopt.h": "c"
+    }
+}
