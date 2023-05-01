@@ -6,7 +6,7 @@ GRR: 20196473
 ### Funcionalidades
 
 #### Funções de codificação
-[x] Receber input em arquivo
+[x] Receber input em arquivo  
 [x] Abrir livro cifra  
 [x] Load chaves na memória  
 [x] Cria arquivo de chaves  
